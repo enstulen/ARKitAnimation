@@ -103,13 +103,13 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     func volumeChanged(){
         if(activeIndex == 0){
-            
+            runSpending()
         }
         else if (activeIndex == 1){
-            
+            runAtm()
         }
         else if (activeIndex == 2){
-            
+            runGreen()
         }
     }
     
@@ -506,50 +506,70 @@ extension ViewController: SFSpeechRecognitionTaskDelegate, AVSpeechSynthesizerDe
 //        }
         
         if (textBuffer.lowercased().contains("spending") && isProccessing == false){
-            isProccessing = true
-            
-            let url = URL(string: "http://52.59.225.216/total/5")
-
-            Alamofire.request(url!).responseJSON { response in
-                let json = JSON(data: response.data!)
-                let array = json["total"].arrayObject
-                self.addBarChart(at: SCNVector3(0.5, -1, -1), values: [array as! Array<Double>], indexLabels: ["September", "August", "Juli", "Juni", "Mai"])
-                self.speakAndAnimate(string: "Here are your expenses the last few months. It seems like you spent a lot of money in June")
-            }
-            restartSpeechProccesser()
-        }
-        else if (textBuffer.lowercased().contains("green") && isProccessing == false){
-            isProccessing = true
-            
-            let url = URL(string: "http://52.59.225.216/reducefootprint")
-            
-            Alamofire.request(url!).responseJSON { response in
-                let json = JSON(data: response.data!)
-                self.chartData = json
-                let dictionary = json["data"][0].dictionary!
-                let values = [dictionary["Diff"]?.doubleValue, dictionary["toEnergyLevel"]?.doubleValue, dictionary["fromEnergyLevel"]?.doubleValue]
-                
-                self.addBarChart(at: SCNVector3(0.5, -1, -1), values: [values as! Array<Double>], indexLabels: ["Differanse", dictionary["toFirm"]!.stringValue , dictionary["fromFirm"]!.stringValue])
-                self.speakAndAnimate(string: "Here are your expenses the last few months. It seems like you spent a lot of money in June")
-            }
-            restartSpeechProccesser()
+            activeIndex = 1
+           runSpending()
         }
         else if (textBuffer.lowercased().contains("atm") && isProccessing == false){
-            isProccessing = true
-            //Add mapView
-            let url = URL(string: "http://52.59.225.216/atm")
-            
-            Alamofire.request(url!).responseJSON { response in
-                let json = JSON(data: response.data!)
-                
-                self.lat = json["latitude"].doubleValue
-                self.long = json["longitude"].doubleValue
-                self.addMapView(lat: self.lat, long: self.long)
-                self.speakAndAnimate(string: "Here is the closest one, you can click on the map to open the Google Maps app")
-            }
-            restartSpeechProccesser()
+            activeIndex = 2
+            runAtm()
+        }
+        else if (textBuffer.lowercased().contains("green") && isProccessing == false){
+            activeIndex = 3
+            runGreen()
         }
     }
+    
+    func runSpending(){
+        activeIndex = 1
+        isProccessing = true
+        
+        let url = URL(string: "http://52.59.225.216/total/5")
+        
+        Alamofire.request(url!).responseJSON { response in
+            let json = JSON(data: response.data!)
+            let array = json["total"].arrayObject
+            self.addBarChart(at: SCNVector3(0.5, -1, -1), values: [array as! Array<Double>], indexLabels: ["September", "August", "Juli", "Juni", "Mai"])
+            self.speakAndAnimate(string: "Here are your expenses the last few months. It seems like you spent a lot of money in June")
+        }
+        restartSpeechProccesser()
+    }
+    
+    func runGreen(){
+        isProccessing = true
+        activeIndex = 3
+        let url = URL(string: "http://52.59.225.216/reducefootprint")
+        
+        Alamofire.request(url!).responseJSON { response in
+            let json = JSON(data: response.data!)
+            self.chartData = json
+            let dictionary = json["data"][0].dictionary!
+            let values = [dictionary["Diff"]?.doubleValue, dictionary["toEnergyLevel"]?.doubleValue, dictionary["fromEnergyLevel"]?.doubleValue]
+            
+            self.addBarChart(at: SCNVector3(0.5, -1, -1), values: [values as! Array<Double>], indexLabels: ["Differanse", dictionary["toFirm"]!.stringValue , dictionary["fromFirm"]!.stringValue])
+            self.speakAndAnimate(string: "")
+        }
+        restartSpeechProccesser()
+        
+    }
+    
+    func runAtm(){
+        activeIndex = 2
+        isProccessing = true
+        //Add mapView
+        let url = URL(string: "http://52.59.225.216/atm")
+        
+        Alamofire.request(url!).responseJSON { response in
+            let json = JSON(data: response.data!)
+            
+            self.lat = json["latitude"].doubleValue
+            self.long = json["longitude"].doubleValue
+            self.addMapView(lat: self.lat, long: self.long)
+            self.speakAndAnimate(string: "Here is the closest one, you can click on the map to open the Google Maps app")
+        }
+        restartSpeechProccesser()
+        
+    }
+    
     func speakAndAnimate(string: String) {
         playAnimation(key: "talking")
         speak(string: string)
