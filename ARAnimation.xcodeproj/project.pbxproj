@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		167D86C8EE31FC2B9E2D938B /* Pods_ARAnimation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC56E73B83C1F55B0B791FA2 /* Pods_ARAnimation.framework */; };
+		5AB7F2C91F6DF45500CC6D90 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AB7F2C81F6DF45500CC6D90 /* Settings.swift */; };
 		E4231FF21F15285C00CBE4C1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4231FF11F15285C00CBE4C1 /* AppDelegate.swift */; };
 		E4231FF41F15285C00CBE4C1 /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = E4231FF31F15285C00CBE4C1 /* art.scnassets */; };
 		E4231FF61F15285C00CBE4C1 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4231FF51F15285C00CBE4C1 /* ViewController.swift */; };
@@ -18,6 +19,17 @@
 
 /* Begin PBXFileReference section */
 		306B9EDE607426DDE7A0F7FE /* Pods-ARAnimation.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ARAnimation.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ARAnimation/Pods-ARAnimation.debug.xcconfig"; sourceTree = "<group>"; };
+		5AB7F2BD1F6DEEF600CC6D90 /* ARBarChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARBarChart.swift; sourceTree = "<group>"; };
+		5AB7F2BE1F6DEEF600CC6D90 /* ARBarChartBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARBarChartBar.swift; sourceTree = "<group>"; };
+		5AB7F2BF1F6DEEF600CC6D90 /* ARBarChartProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARBarChartProtocols.swift; sourceTree = "<group>"; };
+		5AB7F2C01F6DEEF600CC6D90 /* ARChartHighlighter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARChartHighlighter.swift; sourceTree = "<group>"; };
+		5AB7F2C11F6DEEF600CC6D90 /* ARChartLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARChartLabel.swift; sourceTree = "<group>"; };
+		5AB7F2C21F6DEEF600CC6D90 /* ARChartPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARChartPresenter.swift; sourceTree = "<group>"; };
+		5AB7F2C31F6DEEF600CC6D90 /* ARCharts.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ARCharts.h; sourceTree = "<group>"; };
+		5AB7F2C41F6DEEF600CC6D90 /* ARDataSeries.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARDataSeries.swift; sourceTree = "<group>"; };
+		5AB7F2C61F6DEEF600CC6D90 /* CABasicAnimation+Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CABasicAnimation+Utilities.swift"; sourceTree = "<group>"; };
+		5AB7F2C71F6DEEF600CC6D90 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5AB7F2C81F6DF45500CC6D90 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		AC56E73B83C1F55B0B791FA2 /* Pods_ARAnimation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ARAnimation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AF927F228CF99130856B84B0 /* Pods-ARAnimation.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ARAnimation.release.xcconfig"; path = "Pods/Target Support Files/Pods-ARAnimation/Pods-ARAnimation.release.xcconfig"; sourceTree = "<group>"; };
 		E4231FEE1F15285C00CBE4C1 /* ARAnimation.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ARAnimation.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -42,6 +54,31 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5AB7F2BC1F6DEEF600CC6D90 /* ARCharts */ = {
+			isa = PBXGroup;
+			children = (
+				5AB7F2BD1F6DEEF600CC6D90 /* ARBarChart.swift */,
+				5AB7F2BE1F6DEEF600CC6D90 /* ARBarChartBar.swift */,
+				5AB7F2BF1F6DEEF600CC6D90 /* ARBarChartProtocols.swift */,
+				5AB7F2C01F6DEEF600CC6D90 /* ARChartHighlighter.swift */,
+				5AB7F2C11F6DEEF600CC6D90 /* ARChartLabel.swift */,
+				5AB7F2C21F6DEEF600CC6D90 /* ARChartPresenter.swift */,
+				5AB7F2C31F6DEEF600CC6D90 /* ARCharts.h */,
+				5AB7F2C41F6DEEF600CC6D90 /* ARDataSeries.swift */,
+				5AB7F2C51F6DEEF600CC6D90 /* Extensions */,
+				5AB7F2C71F6DEEF600CC6D90 /* Info.plist */,
+			);
+			path = ARCharts;
+			sourceTree = "<group>";
+		};
+		5AB7F2C51F6DEEF600CC6D90 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				5AB7F2C61F6DEEF600CC6D90 /* CABasicAnimation+Utilities.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
 		5C3D3534DC4B50CACF54908C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -80,9 +117,11 @@
 		E4231FF01F15285C00CBE4C1 /* ARAnimation */ = {
 			isa = PBXGroup;
 			children = (
+				5AB7F2BC1F6DEEF600CC6D90 /* ARCharts */,
 				E4231FF11F15285C00CBE4C1 /* AppDelegate.swift */,
 				E4231FF31F15285C00CBE4C1 /* art.scnassets */,
 				E4231FF51F15285C00CBE4C1 /* ViewController.swift */,
+				5AB7F2C81F6DF45500CC6D90 /* Settings.swift */,
 				E4231FF71F15285C00CBE4C1 /* Main.storyboard */,
 				E4231FFA1F15285C00CBE4C1 /* Assets.xcassets */,
 				E4231FFC1F15285C00CBE4C1 /* LaunchScreen.storyboard */,
@@ -187,12 +226,14 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-ARAnimation/Pods-ARAnimation-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/ARCharts/ARCharts.framework",
 				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftCharts/SwiftCharts.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftyJSON/SwiftyJSON.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ARCharts.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftCharts.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyJSON.framework",
@@ -224,6 +265,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5AB7F2C91F6DF45500CC6D90 /* Settings.swift in Sources */,
 				E4231FF61F15285C00CBE4C1 /* ViewController.swift in Sources */,
 				E4231FF21F15285C00CBE4C1 /* AppDelegate.swift in Sources */,
 			);

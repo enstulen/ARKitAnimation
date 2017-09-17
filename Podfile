@@ -7,6 +7,7 @@ target 'ARAnimation' do
 pod 'SwiftCharts', :git => 'https://github.com/i-schuetz/SwiftCharts.git'
 pod 'Alamofire'
 pod 'SwiftyJSON'
+pod 'ARCharts’, :git => ‘https://github.com/Boris-Em/ARCharts.git'
 
   # Pods for ARAnimation
 

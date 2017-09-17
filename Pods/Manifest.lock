@@ -1,27 +1,35 @@
 PODS:
   - Alamofire (4.4.0)
+  - ARCharts (0.0.1)
   - SwiftCharts (0.6)
   - SwiftyJSON (3.1.4)
 
 DEPENDENCIES:
   - Alamofire
+  - ARCharts (from `https://github.com/Boris-Em/ARCharts.git`)
   - SwiftCharts (from `https://github.com/i-schuetz/SwiftCharts.git`)
   - SwiftyJSON
 
 EXTERNAL SOURCES:
+  ARCharts:
+    :git: https://github.com/Boris-Em/ARCharts.git
   SwiftCharts:
     :git: https://github.com/i-schuetz/SwiftCharts.git
 
 CHECKOUT OPTIONS:
+  ARCharts:
+    :commit: 2de2ea70ec3069ad956d324c8f81b2d4b4d389a9
+    :git: https://github.com/Boris-Em/ARCharts.git
   SwiftCharts:
     :commit: 2c1f53c4a05f64be8179c3073915969c22836503
     :git: https://github.com/i-schuetz/SwiftCharts.git
 
 SPEC CHECKSUMS:
   Alamofire: dc44b1600b800eb63da6a19039a0083d62a6a62d
+  ARCharts: d42eebc98eb50f846c0cbc3bfa6d149cc7371573
   SwiftCharts: 84f84c2a94a3f51f055eeaacd9b8dc3ada3380eb
   SwiftyJSON: c2842d878f95482ffceec5709abc3d05680c0220
 
-PODFILE CHECKSUM: c46c7c213acafe15eadeaaed2dcd5a1d5b1c5c25
+PODFILE CHECKSUM: 0a7f623d27c15e1a660e1af5f93da0c51675f22e
 
 COCOAPODS: 1.3.1

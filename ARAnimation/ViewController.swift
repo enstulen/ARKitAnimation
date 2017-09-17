@@ -1,10 +1,4 @@
-//
-//  ViewController.swift
-//  ARAnimation
-//
-//  Created by Esteban Herrera on 7/11/17.
-//  Copyright © 2017 Esteban Herrera. All rights reserved.
-//
+
 
 import UIKit
 import SceneKit
@@ -13,6 +7,7 @@ import SwiftCharts
 import Speech
 import Alamofire
 import SwiftyJSON
+import ARCharts
 
 
 class ViewController: UIViewController, ARSCNViewDelegate {
@@ -22,6 +17,20 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     var idle:Bool = true
     var infoNode: SCNNode!
     var chart: BarsChart!
+    var barChart: ARBarChart?
+    var dataSeries: ARDataSeries?
+    var settings = Settings()
+
+    private let arKitColors = [
+        UIColor(red: 238.0 / 255.0, green: 109.0 / 255.0, blue: 150.0 / 255.0, alpha: 1.0),
+        UIColor(red: 70.0  / 255.0, green: 150.0 / 255.0, blue: 150.0 / 255.0, alpha: 1.0),
+        UIColor(red: 134.0 / 255.0, green: 218.0 / 255.0, blue: 255.0 / 255.0, alpha: 1.0),
+        UIColor(red: 237.0 / 255.0, green: 231.0 / 255.0, blue: 254.0 / 255.0, alpha: 1.0),
+        UIColor(red: 0.0   / 255.0, green: 110.0 / 255.0, blue: 235.0 / 255.0, alpha: 1.0),
+        UIColor(red: 193.0 / 255.0, green: 193.0 / 255.0, blue: 255.0 / 255.0, alpha: 1.0),
+        UIColor(red: 84.0  / 255.0, green: 204.0 / 255.0, blue: 254.0 / 255.0, alpha: 1.0)
+    ]
+
     
     var lat: Double!
     var long: Double!
@@ -67,18 +76,14 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         //Lighting
         sceneView.autoenablesDefaultLighting = true
         
-        //Add infoScreen
-        infoNode = SCNNode(geometry: SCNBox(width: 1, height: 1.5, length: 0, chamferRadius: 0))
-        infoNode.position = SCNVector3(-1, -1, -3.5)
-        infoNode.name = "infoNode"
-        sceneView.scene.rootNode.addChildNode(infoNode)
-        
         // Load the DAE animations
         loadAnimations()
         
     }
     
     func addChartView(bars: Array<Any>){
+        addInfoScreen()
+
         let chartConfig = BarsChartConfig(
             valsAxisConfig: ChartAxisConfig(from: 0, to: 8, by: 2)
         )
@@ -100,6 +105,9 @@ class ViewController: UIViewController, ARSCNViewDelegate {
 
     
     func addMapView(lat: Double, long: Double){
+        addInfoScreen()
+        
+
         self.lat = lat
         self.long = long
         
@@ -117,6 +125,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     }
     
     func addImageToInfoScreen(image: UIImage){
+        addInfoScreen()
+
         let imageView = UIImageView(frame: CGRect(x: 100, y: 100, width: 100, height: 100))
         imageView.image = image
         self.view.addSubview(imageView)
@@ -137,8 +147,22 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     }
     
     
+    func addInfoScreen(){
+        if barChart != nil {
+            barChart?.removeFromParentNode()
+            barChart = nil
+        }
+        //Add infoScreen
+        infoNode = SCNNode(geometry: SCNBox(width: 1, height: 1.5, length: 0, chamferRadius: 0))
+        infoNode.position = SCNVector3(-1, -1, -2)
+        infoNode.name = "infoNode"
+        sceneView.scene.rootNode.addChildNode(infoNode)
+    }
     
+
     func addViewToInfoScreen(view: UIView){
+        addInfoScreen()
+        
         let (min, max) = infoNode.boundingBox
         let height = max.y - min.y
         let width = max.x - min.x
@@ -169,7 +193,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
         // Set up some properties
 
-        node.position = SCNVector3(0, -1, -2)
+        node.position = SCNVector3(0, -1, -1)
         node.scale = SCNVector3(0.2, 0.2, 0.2)
         
         // Add the node to the scene
@@ -291,6 +315,40 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         // Reset tracking and/or remove existing anchors if consistent tracking is required
         
     }
+    
+    private func addBarChart(at position: SCNVector3) {
+        if infoNode != nil {
+            infoNode.removeFromParentNode()
+            infoNode = nil
+        }
+        
+        if barChart != nil {
+            barChart?.removeFromParentNode()
+            barChart = nil
+        }
+        
+        var values = [[12.0, 23.2, 24.5, 30.2]]
+        
+        dataSeries = ARDataSeries(withValues: values)
+        dataSeries?.barColors = arKitColors
+        dataSeries?.barOpacity = settings.barOpacity
+        dataSeries?.indexLabels = ["Halla", "OK", "Den er grei", "okidok"]
+        dataSeries?.spaceForIndexLabels = 0.2
+        dataSeries?.spaceForIndexLabels = 0.2
+        
+        barChart = ARBarChart()
+        if let barChart = barChart {
+            barChart.eulerAngles = SCNVector3(0, 3.14, 0)
+            barChart.dataSource = dataSeries
+            barChart.delegate = dataSeries
+            barChart.animationType = settings.animationType
+            barChart.size = SCNVector3(settings.graphWidth, settings.graphHeight, settings.graphLength)
+            barChart.position = position
+            barChart.draw()
+            sceneView.scene.rootNode.addChildNode(barChart)
+        }
+    }
+
 }
 
 
@@ -398,14 +456,9 @@ extension ViewController: SFSpeechRecognitionTaskDelegate, AVSpeechSynthesizerDe
             print("==============================")
             //Add chart view\
             isProccessing = true
-            addChartView(bars: [
-                ("A", Double(2)),
-                ("B", Double(4.5)),
-                ("C", Double(3)),
-                ("D", Double(5.4)),
-                ("E", Double(6.8)),
-                ("F", Double(0.5))
-                ])
+            
+            self.addBarChart(at: SCNVector3(0.5, -1, -1))
+
             Alamofire.request("52.59.225.216/atm").responseJSON { response in
                 
             }
@@ -416,16 +469,14 @@ extension ViewController: SFSpeechRecognitionTaskDelegate, AVSpeechSynthesizerDe
             isProccessing = true
             //Add mapView
             print("==============================2")
-            addMapView(lat: Double(42.585444), long: Double(13.007813))
             
             let url = URL(string: "http://52.59.225.216/atm")
-            
             Alamofire.request(url!).responseJSON { response in
                 let json = JSON(data: response.data!)
 
                 self.lat = json["latitude"].doubleValue
                 self.long = json["longitude"].doubleValue
-
+                self.addMapView(lat: self.lat, long: self.long)
                 self.speakAndAnimate(string: "Here is the closest ATM, you can click on the map to open the Google Maps app")
             }
             restartSpeechProccesser()
@@ -455,6 +506,16 @@ extension UIImage {
         self.init(cgImage: (image?.cgImage)!)
     }
 }
+
+//            addChartView(bars: [
+//                ("A", Double(2)),
+//                ("B", Double(4.5)),
+//                ("C", Double(3)),
+//                ("D", Double(5.4)),
+//                ("E", Double(6.8)),
+//                ("F", Double(0.5))
+//                ])
+
 
 
 //        let text = SCNText(string: "Hello", extrusionDepth: 0.1)
