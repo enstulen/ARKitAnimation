@@ -32,8 +32,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         UIColor(red: 84.0  / 255.0, green: 204.0 / 255.0, blue: 254.0 / 255.0, alpha: 1.0)
     ]
     
-    var index = 0
-
+    var index = 1
+    var chartData: JSON!
     
     var lat: Double!
     var long: Double!
@@ -289,18 +289,24 @@ class ViewController: UIViewController, ARSCNViewDelegate {
 //            self.addBarChart(at: SCNVector3(0.5, -1, -1), values: [[25.0, 30.0, 45.0]], indexLabels: ["Selskap1", "Selskap 2", "Differanse"])
         }
         else if hitResults.first != nil {
-            if self.index == 0 {
-                self.addBarChart(at: SCNVector3(0.5, -1, -1), values: [[25.0, 30.0, 45.0]], indexLabels: ["Selskap1", "Selskap 2", "Differanse"])
+            var json = self.chartData!
+            if self.index == 1 {
+                let dictionary = json["data"][1].dictionary!
+                let values = [dictionary["Diff"]?.doubleValue, dictionary["toEnergyLevel"]?.doubleValue, dictionary["fromEnergyLevel"]?.doubleValue]
+                
+                self.addBarChart(at: SCNVector3(0.5, -1, -1), values: [values as! Array<Double>], indexLabels: ["Difference", dictionary["toFirm"]!.stringValue , dictionary["fromFirm"]!.stringValue])
+                
                 self.index += 1
-            } else if self.index == 1 {
-                self.addBarChart(at: SCNVector3(0.5, -1, -1), values: [[12.0, 30.0, 20.0]], indexLabels: ["Selskap1", "Selskap 2", "Differanse"])
-                self.index += 1
-            } else if self.index == 3 {
-                self.addBarChart(at: SCNVector3(0.5, -1, -1), values: [[10.0, 15.0, 27.0]], indexLabels: ["Selskap1", "Selskap 2", "Differanse"])
+            } else if self.index == 2 {
+                let dictionary = json["data"][2].dictionary!
+                let values = [dictionary["Diff"]?.doubleValue, dictionary["toEnergyLevel"]?.doubleValue, dictionary["fromEnergyLevel"]?.doubleValue]
+                
+                self.addBarChart(at: SCNVector3(0.5, -1, -1), values: [values as! Array<Double>], indexLabels: ["Difference", dictionary["toFirm"]!.stringValue , dictionary["fromFirm"]!.stringValue])
                 self.index += 1
             } else {
-                self.addBarChart(at: SCNVector3(0.5, -1, -1), values: [[25.0, 30.0, 45.0]], indexLabels: ["Selskap1", "Selskap 2", "Differanse"])
-                self.index += 1
+                let values = [json["totalUse"].doubleValue, json["totalSavings"].doubleValue]
+                
+                self.addBarChart(at: SCNVector3(0.5, -1, -1), values: [values as! Array<Double>], indexLabels: ["Total use", "Total savings"])
             }
             
 //            if(idle) {
@@ -519,10 +525,11 @@ extension ViewController: SFSpeechRecognitionTaskDelegate, AVSpeechSynthesizerDe
             
             Alamofire.request(url!).responseJSON { response in
                 let json = JSON(data: response.data!)
+                self.chartData = json
                 let dictionary = json["data"][0].dictionary!
                 let values = [dictionary["Diff"]?.doubleValue, dictionary["toEnergyLevel"]?.doubleValue, dictionary["fromEnergyLevel"]?.doubleValue]
                 
-                self.addBarChart(at: SCNVector3(0.5, -1, -1), values: [values as! Array<Double>], indexLabels: ["Differanse", "ok", "MHM"])
+                self.addBarChart(at: SCNVector3(0.5, -1, -1), values: [values as! Array<Double>], indexLabels: ["Differanse", dictionary["toFirm"]!.stringValue , dictionary["fromFirm"]!.stringValue])
                 self.speakAndAnimate(string: "Here are your expenses the last few months. It seems like you spent a lot of money in June")
             }
             restartSpeechProccesser()

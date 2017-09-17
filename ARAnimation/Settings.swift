@@ -19,7 +19,7 @@ struct Settings {
     var numberOfIndices = 10
     var graphWidth: Float = 0.6
     var graphHeight: Float = 0.6
-    var graphLength: Float = 0.5
+    var graphLength: Float = 0.3
     var dataSet: Int = 0
     
     public func index(forEntranceAnimationType animationType: ARChartPresenter.AnimationType?) -> Int {
