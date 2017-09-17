@@ -76,6 +76,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         //Lighting
         sceneView.autoenablesDefaultLighting = true
         
+
+        
         // Load the DAE animations
         loadAnimations()
         
@@ -107,7 +109,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     func addMapView(lat: Double, long: Double){
         addInfoScreen()
         
-
         self.lat = lat
         self.long = long
         
@@ -118,14 +119,14 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         let image = UIImage(data: data! as Data)
         let view = UIView(frame: CGRect(x: 0, y: 0, width: 300, height: 450))
         let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 300, height: 450))
-        imageView.image = image
+        imageView.image = image!
         view.addSubview(imageView)
+        //addImageToInfoScreen(image: image!)
         addViewToInfoScreen(view: view)
      
     }
     
     func addImageToInfoScreen(image: UIImage){
-        addInfoScreen()
 
         let imageView = UIImageView(frame: CGRect(x: 100, y: 100, width: 100, height: 100))
         imageView.image = image
@@ -153,15 +154,15 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             barChart = nil
         }
         //Add infoScreen
-        infoNode = SCNNode(geometry: SCNBox(width: 1, height: 1.5, length: 0, chamferRadius: 0))
+        infoNode = SCNNode(geometry: SCNBox(width: 1.1, height: 1.6, length: 0, chamferRadius: 0))
         infoNode.position = SCNVector3(-1, -1, -2)
         infoNode.name = "infoNode"
         sceneView.scene.rootNode.addChildNode(infoNode)
+
     }
     
 
     func addViewToInfoScreen(view: UIView){
-        addInfoScreen()
         
         let (min, max) = infoNode.boundingBox
         let height = max.y - min.y
@@ -169,8 +170,9 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
         let imagePlane = SCNPlane(width: CGFloat(width), height: CGFloat(height))
         imagePlane.firstMaterial?.diffuse.contents = UIImage(view: view)
-        //imagePlane.firstMaterial?.lightingModel = .constant
+        imagePlane.firstMaterial?.lightingModel = .constant
         let planeNode = SCNNode(geometry: imagePlane)
+
         infoNode.enumerateChildNodes { (node, stop) in
             node.removeFromParentNode()
         }
@@ -316,7 +318,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
     }
     
-    private func addBarChart(at position: SCNVector3) {
+    private func addBarChart(at position: SCNVector3, values: [[Double]]) {
         if infoNode != nil {
             infoNode.removeFromParentNode()
             infoNode = nil
@@ -327,12 +329,10 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             barChart = nil
         }
         
-        var values = [[12.0, 23.2, 24.5, 30.2]]
-        
         dataSeries = ARDataSeries(withValues: values)
         dataSeries?.barColors = arKitColors
         dataSeries?.barOpacity = settings.barOpacity
-        dataSeries?.indexLabels = ["Halla", "OK", "Den er grei", "okidok"]
+        dataSeries?.indexLabels = ["September", "August", "Juli", "Juni", "Mai"]
         dataSeries?.spaceForIndexLabels = 0.2
         dataSeries?.spaceForIndexLabels = 0.2
         
@@ -457,10 +457,13 @@ extension ViewController: SFSpeechRecognitionTaskDelegate, AVSpeechSynthesizerDe
             //Add chart view\
             isProccessing = true
             
-            self.addBarChart(at: SCNVector3(0.5, -1, -1))
+            let url = URL(string: "http://52.59.225.216/total/5")
 
-            Alamofire.request("52.59.225.216/atm").responseJSON { response in
-                
+            Alamofire.request(url!).responseJSON { response in
+                let json = JSON(data: response.data!)
+                let array = json["total"].arrayObject
+                self.addBarChart(at: SCNVector3(0.5, -1, -1), values: [array as! Array<Double>])
+                self.speakAndAnimate(string: "Here are your expenses the last few months. It seems like you spent a lot of money in June")
             }
             restartSpeechProccesser()
         }
@@ -468,16 +471,15 @@ extension ViewController: SFSpeechRecognitionTaskDelegate, AVSpeechSynthesizerDe
             
             isProccessing = true
             //Add mapView
-            print("==============================2")
-            
             let url = URL(string: "http://52.59.225.216/atm")
+
             Alamofire.request(url!).responseJSON { response in
                 let json = JSON(data: response.data!)
 
                 self.lat = json["latitude"].doubleValue
                 self.long = json["longitude"].doubleValue
                 self.addMapView(lat: self.lat, long: self.long)
-                self.speakAndAnimate(string: "Here is the closest ATM, you can click on the map to open the Google Maps app")
+                self.speakAndAnimate(string: "Here is the closest one, you can click on the map to open the Google Maps app")
             }
             restartSpeechProccesser()
         }
