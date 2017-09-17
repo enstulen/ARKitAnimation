@@ -8,6 +8,7 @@ import Speech
 import Alamofire
 import SwiftyJSON
 import ARCharts
+import MediaPlayer
 
 
 class ViewController: UIViewController, ARSCNViewDelegate {
@@ -47,6 +48,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     var isActive = false
     var textBuffer:String = ""
+    var activeIndex = 0
     
     let synth = AVSpeechSynthesizer()
     var myUtterance = AVSpeechUtterance(string: "")
@@ -81,6 +83,32 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         // Load the DAE animations
         loadAnimations()
         
+        do{
+            try audioSession.setActive(true)
+        }
+        catch{
+            print("Error info: \(error)")
+        }
+        audioSession.addObserver(self, forKeyPath: "outputVolume", options: NSKeyValueObservingOptions.new, context: nil)
+        
+        let volumeView = MPVolumeView(frame: .zero)
+        view.addSubview(volumeView)
+    }
+    
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        volumeChanged()
+    }
+    
+    func volumeChanged(){
+        if(activeIndex == 0){
+            
+        }
+        else if (activeIndex == 1){
+            
+        }
+        else if (activeIndex == 2){
+            
+        }
     }
     
     func addChartView(bars: Array<Any>){
@@ -442,7 +470,38 @@ extension ViewController: SFSpeechRecognitionTaskDelegate, AVSpeechSynthesizerDe
         self.recordAndRecognizeSpeech()
     }
     
+    func runSpending(){
+        print("==============================")
+        //Add chart view\
+        isProccessing = true
+        
+        let url = URL(string: "http://52.59.225.216/total/5")
+        
+        Alamofire.request(url!).responseJSON { response in
+            let json = JSON(data: response.data!)
+            let array = json["total"].arrayObject
+            self.addBarChart(at: SCNVector3(0.5, -1, -1), values: [array as! Array<Double>])
+            self.speakAndAnimate(string: "Here are your expenses the last few months. It seems like you spent a lot of money in June")
+        }
+        restartSpeechProccesser()
+    }
     
+    func runATM(){
+        isProccessing = true
+        //Add mapView
+        let url = URL(string: "http://52.59.225.216/atm")
+        
+        Alamofire.request(url!).responseJSON { response in
+            let json = JSON(data: response.data!)
+            
+            self.lat = json["latitude"].doubleValue
+            self.long = json["longitude"].doubleValue
+            self.addMapView(lat: self.lat, long: self.long)
+            self.speakAndAnimate(string: "Here is the closest one, you can click on the map to open the Google Maps app")
+        }
+        restartSpeechProccesser()
+        
+    }
     
     func processText(){
         print(textBuffer)
@@ -453,35 +512,11 @@ extension ViewController: SFSpeechRecognitionTaskDelegate, AVSpeechSynthesizerDe
 //        }
         
         if (textBuffer.lowercased().contains("spending") && isProccessing == false){
-            print("==============================")
-            //Add chart view\
-            isProccessing = true
-            
-            let url = URL(string: "http://52.59.225.216/total/5")
-
-            Alamofire.request(url!).responseJSON { response in
-                let json = JSON(data: response.data!)
-                let array = json["total"].arrayObject
-                self.addBarChart(at: SCNVector3(0.5, -1, -1), values: [array as! Array<Double>])
-                self.speakAndAnimate(string: "Here are your expenses the last few months. It seems like you spent a lot of money in June")
-            }
-            restartSpeechProccesser()
+            runSpending()
         }
         else if (textBuffer.lowercased().contains("atm") && isProccessing == false){
-            
-            isProccessing = true
-            //Add mapView
-            let url = URL(string: "http://52.59.225.216/atm")
+            runATM()
 
-            Alamofire.request(url!).responseJSON { response in
-                let json = JSON(data: response.data!)
-
-                self.lat = json["latitude"].doubleValue
-                self.long = json["longitude"].doubleValue
-                self.addMapView(lat: self.lat, long: self.long)
-                self.speakAndAnimate(string: "Here is the closest one, you can click on the map to open the Google Maps app")
-            }
-            restartSpeechProccesser()
         }
     }
     func speakAndAnimate(string: String) {
